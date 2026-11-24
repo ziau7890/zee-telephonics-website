@@ -102,7 +102,7 @@ What has and has not been tested: the form handler was tested locally with an SQ
 
 `vercel.json` tells Vercel to build the Astro site, remove the PHP files (Vercel cannot run PHP), and serve the form handler `api/lead.ts` as a serverless function at `/api/lead`. The form automatically posts there when the site is built on Vercel.
 
-Leads are saved by one server-only database function, `create_website_lead`, in the Zee Telephonics CRM Supabase project. It writes into the CRM's existing `leads` table (with `source = 'website'`) and keeps a `website_submissions` log for rate limiting. The SQL is in `supabase/migrations/20261124000001_website_intake.sql`. It only adds; it does not change existing CRM tables.
+Leads are saved by one server-only database function, `create_website_lead(p_payload, p_ip_hash, p_user_agent, p_rate_limit)`, in the Supabase project shared with the Zee Telephonics CRM. **The CRM repository owns that function and every database migration**; this website only calls it. The payload is the `Lead` object in `src/lib/lead.ts` (full_name, company, email, phone, service slug, team_size, message, consent, consent_text, source_page and UTM fields). The function answers `{ "status": "ok", "lead_id": ... }` or `{ "status": "rate_limited" }`.
 
 Environment variables to set in Vercel (Project > Settings > Environment Variables):
 
@@ -128,8 +128,6 @@ src/
   styles/         global.css (colours, fonts, spacing tokens)
 api/
   lead.ts         Vercel form function (saves leads to Supabase)
-supabase/
-  migrations/     website intake function for the CRM database
 public/
   .htaccess       HTTPS redirect, security headers, caching (Hostinger)
   api/            lead.php + lib/ (PHP form handler, PHPMailer, CRM adapters)

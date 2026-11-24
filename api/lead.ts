@@ -12,8 +12,8 @@
  *   RESEND_API_KEY, LEAD_NOTIFY_TO, LEAD_FROM optional email alert via Resend
  */
 import { createHash } from 'node:crypto';
-import { validateLead, type Lead } from '../src/lib/lead';
-import servicesFile from '../src/content/services.json';
+import { validateLead, type Lead } from '../src/lib/lead.js';
+import servicesFile from '../src/content/services.json' with { type: 'json' };
 
 const SERVICES = servicesFile.services.filter((s) => s.published);
 const SLUGS = SERVICES.map((s) => s.slug);
