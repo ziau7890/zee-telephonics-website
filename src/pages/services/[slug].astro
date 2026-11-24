@@ -20,7 +20,7 @@ const others = services.filter((s) => s.slug !== service.slug).slice(0, 3);
     crumbs={[{ href: '/services/', label: 'Services' }, { href: `/services/${service.slug}/`, label: service.title }]}
   >
     <div class="btn-row hero-actions">
-      <a class="btn" href={`/contact/?service=${service.slug}#quote`}>Ask about this service</a>
+      <a class="btn" href={`/contact/?service=${service.slug}#quote`}>Ask about this service <span class="arrow" aria-hidden="true">&rarr;</span></a>
     </div>
   </PageHero>
 

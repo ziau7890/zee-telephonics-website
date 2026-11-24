@@ -149,7 +149,7 @@ scripts/          package.sh (builds the downloadable ZIP)
 | Cyan for light backgrounds | `#007A99` | Links on white (readable contrast) |
 | Mist | `#F2F6FB` | Alternating light sections |
 
-Fonts: Sora (headings) and Inter (text), both self-hosted, so no Google Fonts request is made.
+Fonts: Figtree (headings) and Inter (text), both self-hosted, so no Google Fonts request is made.
 
 ## Before launch checklist
 

@@ -5,15 +5,17 @@ const {
   text = 'Share a few details about your business and the support you need. We will reply with next steps.',
 } = Astro.props;
 ---
-<section class="section section--dark cta-band">
-  <div class="container cta-band__inner">
-    <div>
-      <h2>{title}</h2>
-      <p class="lead">{text}</p>
-    </div>
-    <div class="btn-row">
-      <a class="btn" href="/contact/#quote">Get a quote</a>
-      <a class="btn btn--outline" href="/services/">Explore services</a>
+<section class="section cta-band">
+  <div class="container">
+    <div class="cta-panel cta-band__inner reveal">
+      <div>
+        <h2>{title}</h2>
+        <p class="lead">{text}</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--cyan" href="/contact/#quote">Get a quote <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn--outline" href="/services/">Explore services</a>
+      </div>
     </div>
   </div>
 </section>
