@@ -9,7 +9,8 @@
     "check": "astro check",
     "test:php": "php tests/php/run.php",
     "package": "bash scripts/package.sh",
-    "test:e2e": "bash tests/e2e/run.sh"
+    "test:e2e": "bash tests/e2e/run.sh",
+    "test:vercel": "node tests/vercel/lead.test.mjs"
   },
   "repository": {
     "type": "git",

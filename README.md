@@ -5,7 +5,9 @@ The website for **Zee Telephonics** (zeetelephonicsbpo.com).
 
 It is a fast, static website built with [Astro](https://astro.build), with a 3D "connection sphere" on the homepage and a small PHP + MySQL contact form handler that is ready to connect to a CRM later.
 
-> **Status:** Phase 1 (build) and Phase 2 (testing) are done. The site has **not** been deployed. Hosting and deployment are Phase 3: see [docs/DEPLOYMENT-HOSTINGER.md](docs/DEPLOYMENT-HOSTINGER.md).
+> **Status:** Phase 1 (build) and Phase 2 (testing) are done. The site can run in two places:
+> * **Vercel** (current preview): the contact form runs as a Vercel function and saves leads into the Zee Telephonics CRM database on Supabase, the same pattern as the Business Care project. See [Deploying on Vercel](#deploying-on-vercel).
+> * **Hostinger** (later, optional): the contact form runs as PHP + MySQL. See [docs/DEPLOYMENT-HOSTINGER.md](docs/DEPLOYMENT-HOSTINGER.md).
 
 ---
 
@@ -23,7 +25,7 @@ It is a fast, static website built with [Astro](https://astro.build), with a 3D 
 | Privacy policy and Terms of use (drafts) | `/privacy/`, `/terms/` |
 | 404 page, `sitemap-index.xml`, `robots.txt` | automatic |
 
-Also included: an original starter logo (`src/components/Logo.astro`, `public/favicon.svg`), responsive layouts for phone, tablet and desktop, SEO tags and structured data, security headers, and automated tests.
+Also included: the logo, a round "ZT" badge inside an orbit ring with a cyan signal dot plus an uppercase wordmark (`src/components/Logo.astro`, `public/favicon.svg`, and a standalone `public/brand/zee-telephonics-logo.svg` for documents), responsive layouts for phone, tablet and desktop, SEO tags and structured data, security headers, and automated tests.
 
 ## Editing the content (no coding needed)
 
@@ -60,6 +62,7 @@ The contact form needs PHP, so in `npm run dev` it shows a polite "could not sen
 | Command | What it checks |
 | --- | --- |
 | `npx astro check` | TypeScript and content file checks |
+| `npm run test:vercel` | 13 tests of the Vercel form function against a fake Supabase server |
 | `npm run test:php` | 33 automated tests of the form handler: validation, spam blocking, rate limits, saving, email, CRM output, and what happens when the database or email is down |
 | `npm run test:e2e` | Runs the built site on a local PHP server and checks every page and link on phone, tablet and desktop sizes, the mobile menu, the 3D hero and its fallback, and sends real test enquiries (with and without JavaScript) into a local database and a local test mail server. Needs PHP 8.1+, Python 3 with `aiosmtpd`, and Playwright. |
 
@@ -95,6 +98,24 @@ Passwords never go in Git. The template is `server/config/config.example.php`. O
 
 What has and has not been tested: the form handler was tested locally with an SQLite database and a local test mail server. It has **not** yet been tested on Hostinger with a real MySQL database and a real mailbox, because there is no hosting yet. That test is part of Phase 3.
 
+## Deploying on Vercel
+
+`vercel.json` tells Vercel to build the Astro site, remove the PHP files (Vercel cannot run PHP), and serve the form handler `api/lead.ts` as a serverless function at `/api/lead`. The form automatically posts there when the site is built on Vercel.
+
+Leads are saved by one server-only database function, `create_website_lead`, in the Zee Telephonics CRM Supabase project. It writes into the CRM's existing `leads` table (with `source = 'website'`) and keeps a `website_submissions` log for rate limiting. The SQL is in `supabase/migrations/20261124000001_website_intake.sql`. It only adds; it does not change existing CRM tables.
+
+Environment variables to set in Vercel (Project > Settings > Environment Variables):
+
+| Variable | Required | What it is |
+| --- | --- | --- |
+| `SUPABASE_URL` | Yes | The CRM Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase > Project settings > API > `service_role` key. Server only, never shown to visitors. |
+| `IP_HASH_SALT` | Yes | Any long random string |
+| `TURNSTILE_SECRET_KEY` | No | Cloudflare Turnstile secret (also put the site key in `site.json`) |
+| `RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_FROM` | No | Email alert for each new lead through Resend |
+
+Until the Supabase key is set, the form tells visitors it could not send the enquiry. It never pretends to succeed.
+
 ## Project structure
 
 ```
@@ -105,6 +126,10 @@ src/
   pages/          one file per page; services/[slug].astro builds every service page
   scripts/        3D hero (connection-sphere.ts, hero-loader.ts)
   styles/         global.css (colours, fonts, spacing tokens)
+api/
+  lead.ts         Vercel form function (saves leads to Supabase)
+supabase/
+  migrations/     website intake function for the CRM database
 public/
   .htaccess       HTTPS redirect, security headers, caching (Hostinger)
   api/            lead.php + lib/ (PHP form handler, PHPMailer, CRM adapters)

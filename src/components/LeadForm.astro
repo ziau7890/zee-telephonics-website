@@ -1,8 +1,10 @@
 ---
 import { services, site } from '../lib/content';
+// On Vercel the form posts to the serverless function api/lead.ts; on PHP hosting to /api/lead.php.
+const endpoint = process.env.VERCEL ? '/api/lead' : site.formEndpoint;
 const teamSizes = ['Not sure yet', '1 to 5 people', '6 to 20 people', '21 to 50 people', 'More than 50 people'];
 ---
-<form class="lead-form" id="quote" method="post" action={site.formEndpoint} novalidate data-lead-form>
+<form class="lead-form" id="quote" method="post" action={endpoint} novalidate data-lead-form>
   <div class="lead-form__grid">
     <div class="field">
       <label for="lf-name">Full name <span aria-hidden="true">*</span></label>
