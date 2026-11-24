@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { services, type Service } from '../../lib/content';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+interface Props { service: Service }
+const { service } = Astro.props;
+const others = services.filter((s) => s.slug !== service.slug).slice(0, 3);
+---
+<BaseLayout title={service.title} description={service.summary}>
+  <PageHero
+    eyebrow="Service"
+    title={service.title}
+    lead={service.summary}
+    crumbs={[{ href: '/services/', label: 'Services' }, { href: `/services/${service.slug}/`, label: service.title }]}
+  >
+    <div class="btn-row hero-actions">
+      <a class="btn" href={`/contact/?service=${service.slug}#quote`}>Ask about this service</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="container detail">
+      <div class="detail__main reveal">
+        <span class="icon-badge"><Icon name={service.icon} /></span>
+        <h2>Overview</h2>
+        <p class="lead">{service.intro}</p>
+        <h3 class="detail__sub">What this can include</h3>
+        <ul class="check-list">
+          {service.includes.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <aside class="detail__aside reveal">
+        {service.goodFit.length > 0 && (
+          <div class="card">
+            <h3>A good fit for</h3>
+            <ul class="fit-list">
+              {service.goodFit.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        )}
+        <div class="card card--accent">
+          <h3>Scoped to your needs</h3>
+          <p>Hours, volumes, tools and reporting are agreed with you before we start. Tell us what you need and we will propose a plan.</p>
+          <a class="btn btn--dark" href={`/contact/?service=${service.slug}#quote`}>Request a proposal</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {others.length > 0 && (
+    <section class="section section--mist">
+      <div class="container">
+        <h2>Related services</h2>
+        <ul class="related">
+          {others.map((s) => (
+            <li><a href={`/services/${s.slug}/`}><Icon name={s.icon} /> {s.title}</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .hero-actions { margin-top: 2rem; }
+  .detail { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  @media (max-width: 860px) { .detail { grid-template-columns: 1fr; } }
+  .detail__sub { margin-top: 2.2rem; }
+  .detail__aside { display: grid; gap: 1.5rem; position: sticky; top: 100px; }
+  @media (max-width: 860px) { .detail__aside { position: static; } }
+  .fit-list { margin: 0; color: var(--ink-soft); display: grid; gap: 0.5rem; }
+  .card--accent { background: linear-gradient(160deg, #e8f7fd, #eef3ff); border-color: rgb(0 122 153 / 0.25); }
+  .card--accent p { margin-bottom: 1.2rem; }
+  .related { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem; }
+  .related a { display: flex; align-items: center; gap: 0.75rem; padding: 1.1rem 1.25rem; border-radius: var(--radius); background: var(--white); border: 1px solid var(--line); text-decoration: none; color: var(--ink); font-weight: 600; }
+  .related a:hover { border-color: var(--cyan-700); color: var(--cyan-700); }
+  .related :global(svg) { color: var(--blue-500); flex: none; }
+</style>

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { services, home } from '../lib/content';
+---
+<BaseLayout>
+  <Hero />
+
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">What we do</span>
+        <h2>Outsourced support that works like part of your team</h2>
+        <p class="lead">Choose the work you want to hand over. Every engagement is scoped around your customers, your tools and your goals.</p>
+      </div>
+      <div class="grid grid--4">
+        {services.map((s) => <div class="reveal"><ServiceCard service={s} /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">How we work</span>
+        <h2>From first call to go-live, step by step</h2>
+        <p class="lead">A simple, transparent process so you always know what happens next.</p>
+      </div>
+      <div class="reveal"><ProcessSteps /></div>
+      <p class="more-link reveal"><a href="/how-we-work/">See how we work in detail</a></p>
+    </div>
+  </section>
+
+  {home.principles.length > 0 && (
+    <section class="section section--mist">
+      <div class="container">
+        <div class="section-head section-head--center reveal">
+          <span class="eyebrow">Why Zee Telephonics</span>
+          <h2>How we look after your customers</h2>
+        </div>
+        <div class="grid grid--4">
+          {home.principles.map((p, i) => (
+            <div class="card principle reveal">
+              <span class="principle__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .more-link { margin: 2.5rem 0 0; font-weight: 600; }
+  .principle__num {
+    display: block;
+    font-family: var(--font-head); font-weight: 700; font-size: 2rem;
+    background: var(--grad-signal); -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 0.6rem;
+  }
+</style>

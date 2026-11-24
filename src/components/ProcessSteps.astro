@@ -1,0 +1,39 @@
+---
+import { home } from '../lib/content';
+---
+<ol class="steps">
+  {home.process.map((step, i) => (
+    <li class="step">
+      <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      <h3>{step.title}</h3>
+      <p>{step.text}</p>
+    </li>
+  ))}
+</ol>
+<style>
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 1.5rem; counter-reset: s; position: relative; }
+  .step { position: relative; padding-top: 3.6rem; }
+  .step::before {
+    content: '';
+    position: absolute; top: 1.35rem; left: 3.4rem; right: -1.5rem; height: 2px;
+    background: linear-gradient(90deg, var(--cyan-400), rgb(30 94 255 / 0.15));
+    transform-origin: left;
+    animation: step-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+  .step:last-child::before { display: none; }
+  .step__num {
+    position: absolute; top: 0; left: 0;
+    display: grid; place-items: center;
+    width: 2.8rem; height: 2.8rem; border-radius: 50%;
+    font-family: var(--font-head); font-weight: 700; font-size: 0.95rem;
+    color: var(--navy-950); background: var(--cyan-400);
+    box-shadow: 0 0 0 6px rgb(0 212 255 / 0.15);
+  }
+  .step p { color: var(--ink-soft); margin: 0; }
+  :global(.section--dark) .step p { color: var(--on-dark-soft); }
+  @keyframes step-draw { from { transform: scaleX(0); } }
+  @media (max-width: 760px) { .step::before { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .step::before { animation: none; } }
+</style>

@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, home } from '../lib/content';
+const { about } = home;
+---
+<BaseLayout title="About" description={`About ${site.brandName}: our mission, values and the way we work with clients.`}>
+  <PageHero
+    eyebrow="About us"
+    title={site.tagline}
+    lead={about.mission}
+    crumbs={[{ href: '/about/', label: 'About' }]}
+  />
+
+  {about.story && (
+    <section class="section">
+      <div class="container about">
+        <div class="reveal">
+          <span class="eyebrow">Our story</span>
+          <h2>Why we exist</h2>
+        </div>
+        <div class="reveal">
+          <p class="lead">{about.story}</p>
+          <p>We focus on the work that keeps customers happy and operations moving: answering calls and messages, reaching out to prospects, and keeping records accurate. Our aim is simple: when customers speak with us, they should feel they are speaking with you.</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {about.values.length > 0 && (
+    <section class="section section--dark">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Our values</span>
+          <h2>What guides our work</h2>
+        </div>
+        <div class="grid grid--4">
+          {about.values.map((v) => (
+            <div class="card reveal">
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand title="Let's talk about your goals" />
+</BaseLayout>
+
+<style>
+  .about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 5vw, 4rem); }
+  @media (max-width: 800px) { .about { grid-template-columns: 1fr; } }
+</style>

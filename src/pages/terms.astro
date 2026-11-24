@@ -1,0 +1,38 @@
+---
+/*
+ * DRAFT terms of use. Have them reviewed by someone qualified before launch.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, businessName } from '../lib/content';
+const updated = '24 November 2026';
+---
+<BaseLayout title="Terms of use" description={`Terms for using the ${site.domain} website.`}>
+  <PageHero title="Terms of use" lead={`Last updated ${updated}`} crumbs={[{ href: '/terms/', label: 'Terms of use' }]} />
+  <section class="section">
+    <div class="container prose">
+      <p>These terms apply to your use of {site.domain}, operated by {businessName}. By using the website you agree to them.</p>
+
+      <h2>Information on this website</h2>
+      <p>The content on this website is general information about our services. It is not an offer or a contract. The scope, price and terms of any service are set out in a separate written agreement.</p>
+
+      <h2>Using the website</h2>
+      <p>Please do not misuse the website, for example by sending spam through the contact form, trying to access parts of the site that are not public, or interfering with how it works.</p>
+
+      <h2>Intellectual property</h2>
+      <p>The text, design, logo and graphics on this website belong to {businessName} unless stated otherwise. You may not copy or reuse them without permission.</p>
+
+      <h2>Links to other websites</h2>
+      <p>We are not responsible for the content of other websites we link to.</p>
+
+      <h2>Liability</h2>
+      <p>We work to keep the website accurate and available, but we cannot guarantee it will always be error-free or uninterrupted. To the extent the law allows, we are not liable for losses arising from use of the website.</p>
+
+      <h2>Privacy</h2>
+      <p>Our <a href="/privacy/">privacy policy</a> explains how we handle personal information.</p>
+
+      <h2>Changes</h2>
+      <p>We may update these terms. The date at the top shows when they last changed.</p>
+    </div>
+  </section>
+</BaseLayout>

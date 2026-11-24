@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+---
+<BaseLayout title="Thank you" description="Your enquiry has been sent." noindex>
+  <PageHero eyebrow="Enquiry sent" title="Thank you for getting in touch" lead="We have received your enquiry and will reply by email.">
+    <div class="btn-row actions">
+      <a class="btn" href="/services/">Explore services</a>
+      <a class="btn btn--outline" href="/">Back to home</a>
+    </div>
+  </PageHero>
+</BaseLayout>
+<style>.actions { margin-top: 2rem; }</style>

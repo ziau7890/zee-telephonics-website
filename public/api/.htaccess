@@ -1,0 +1,8 @@
+# Only lead.php (and the generated services.json) are reachable in /api/.
+Options -Indexes
+<FilesMatch "\.(php|json)$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^(lead\.php|services\.json)$">
+  Require all granted
+</FilesMatch>
