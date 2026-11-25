@@ -1,0 +1,40 @@
+{
+  "name": "zee-telephonics-website",
+  "version": "1.0.0",
+  "description": "Zee Telephonics BPO marketing website (Astro static site + PHP lead handler)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test:php": "php tests/php/run.php",
+    "package": "bash scripts/package.sh",
+    "test:e2e": "bash tests/e2e/run.sh",
+    "test:vercel": "node tests/vercel/lead.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziau7890/zee-telephonics-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ziau7890/zee-telephonics-website/issues"
+  },
+  "homepage": "https://github.com/ziau7890/zee-telephonics-website#readme",
+  "dependencies": {
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "astro": "^5.18.2",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/sitemap": "^3.7.6",
+    "@types/three": "^0.187.0",
+    "typescript": "^5.9.3"
+  },
+  "private": true,
+  "type": "module"
+}

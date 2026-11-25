@@ -1,0 +1,205 @@
+---
+import { services, site } from '../lib/content';
+// On Vercel the form posts to the serverless function api/lead.ts; on PHP hosting to /api/lead.php.
+const endpoint = process.env.VERCEL ? '/api/lead' : site.formEndpoint;
+const teamSizes = ['Not sure yet', '1 to 5 people', '6 to 20 people', '21 to 50 people', 'More than 50 people'];
+---
+<form class="lead-form" id="quote" method="post" action={endpoint} novalidate data-lead-form>
+  <div class="lead-form__grid">
+    <div class="field">
+      <label for="lf-name">Full name <span aria-hidden="true">*</span></label>
+      <input id="lf-name" name="full_name" type="text" autocomplete="name" required maxlength="120" />
+    </div>
+    <div class="field">
+      <label for="lf-company">Company</label>
+      <input id="lf-company" name="company" type="text" autocomplete="organization" maxlength="160" />
+    </div>
+    <div class="field">
+      <label for="lf-email">Work email <span aria-hidden="true">*</span></label>
+      <input id="lf-email" name="email" type="email" autocomplete="email" required maxlength="190" />
+    </div>
+    <div class="field">
+      <label for="lf-phone">Phone</label>
+      <input id="lf-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
+    </div>
+    <div class="field">
+      <label for="lf-service">Service you are interested in</label>
+      <select id="lf-service" name="service">
+        <option value="">Not sure yet</option>
+        {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="lf-team">Team size you have in mind</label>
+      <select id="lf-team" name="team_size">
+        {teamSizes.map((t) => <option value={t}>{t}</option>)}
+      </select>
+    </div>
+    <div class="field field--full">
+      <label for="lf-message">How can we help? <span aria-hidden="true">*</span></label>
+      <textarea id="lf-message" name="message" rows="5" required minlength="10" maxlength="4000"></textarea>
+    </div>
+
+    <!-- Spam trap: hidden from people, bots tend to fill it in. -->
+    <div class="field--trap" aria-hidden="true">
+      <label for="lf-website">Leave this field empty</label>
+      <input id="lf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="form_started" value="" />
+    <input type="hidden" name="source_page" value="" />
+    <input type="hidden" name="utm_source" value="" />
+    <input type="hidden" name="utm_medium" value="" />
+    <input type="hidden" name="utm_campaign" value="" />
+    <input type="hidden" name="utm_term" value="" />
+    <input type="hidden" name="utm_content" value="" />
+
+    <div class="field field--full field--check">
+      <input id="lf-consent" name="consent" type="checkbox" value="yes" required />
+      <label for="lf-consent">I agree that {site.brandName} may contact me about this enquiry and store my details as described in the <a href="/privacy/">privacy policy</a>. <span aria-hidden="true">*</span></label>
+    </div>
+
+    {site.turnstileSiteKey && (
+      <div class="field field--full">
+        <div class="cf-turnstile" data-sitekey={site.turnstileSiteKey} data-theme="light"></div>
+      </div>
+    )}
+  </div>
+
+  <div class="lead-form__footer">
+    <button class="btn btn--dark" type="submit" data-submit>Send enquiry</button>
+    <p class="lead-form__note">Fields marked * are required.</p>
+  </div>
+  <div class="lead-form__status" role="status" aria-live="polite" data-status></div>
+</form>
+
+{site.turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const set = (name: string, value: string) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement | null;
+      if (el) el.value = value;
+    };
+
+    // Context for the CRM: when the form was opened, which page, which campaign.
+    set('form_started', String(Math.floor(Date.now() / 1000)));
+    set('source_page', document.referrer && new URL(document.referrer).origin === location.origin ? new URL(document.referrer).pathname : location.pathname);
+    const params = new URLSearchParams(location.search);
+    for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']) {
+      let value = params.get(key) ?? '';
+      try {
+        if (value) sessionStorage.setItem(key, value);
+        else value = sessionStorage.getItem(key) ?? '';
+      } catch { /* storage blocked: fine */ }
+      set(key, value.slice(0, 120));
+    }
+    const preselect = params.get('service');
+    const select = form.elements.namedItem('service') as HTMLSelectElement | null;
+    if (preselect && select && [...select.options].some((o) => o.value === preselect)) select.value = preselect;
+
+    const messages: Record<string, string> = {
+      full_name: 'Please enter your name.',
+      email: 'Please enter a valid email address.',
+      message: 'Please tell us a little about what you need (at least 10 characters).',
+      consent: 'Please tick the box so we can contact you.',
+    };
+
+    const showStatus = (text: string, kind: 'error' | 'success' | 'info') => {
+      status.textContent = text;
+      status.dataset.kind = kind;
+    };
+
+    const validate = () => {
+      const invalid: HTMLElement[] = [];
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((el) => {
+        const field = el.closest('.field');
+        const valid = el.type === 'checkbox' ? (el as HTMLInputElement).checked : el.checkValidity() && el.value.trim() !== '';
+        el.setAttribute('aria-invalid', String(!valid));
+        field?.querySelector('.field__error')?.remove();
+        if (!valid) {
+          const msg = document.createElement('p');
+          msg.className = 'field__error';
+          msg.id = `${el.id}-error`;
+          msg.textContent = messages[el.name] ?? 'Please check this field.';
+          field?.appendChild(msg);
+          el.setAttribute('aria-describedby', msg.id);
+          invalid.push(el);
+        } else {
+          el.removeAttribute('aria-describedby');
+        }
+      });
+      invalid[0]?.focus();
+      return invalid.length === 0;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validate()) {
+        showStatus('Please correct the highlighted fields.', 'error');
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = 'Sending...';
+      showStatus('Sending your enquiry...', 'info');
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const data = await res.json().catch(() => null);
+        if (res.ok && data?.ok) {
+          showStatus('Thank you. Your enquiry has been sent.', 'success');
+          window.location.assign('/thank-you/');
+          return;
+        }
+        if (data?.errors) {
+          for (const [name, msg] of Object.entries<string>(data.errors)) messages[name] = msg;
+          validate();
+        }
+        showStatus(data?.message ?? 'Sorry, we could not send your enquiry right now. Please try again later.', 'error');
+      } catch {
+        showStatus('Sorry, we could not send your enquiry right now. Please check your connection and try again.', 'error');
+      }
+      submit.disabled = false;
+      submit.textContent = 'Send enquiry';
+      // A used Turnstile token cannot be reused.
+      (window as unknown as { turnstile?: { reset(): void } }).turnstile?.reset();
+    });
+  }
+</script>
+
+<style>
+  .lead-form { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.4rem, 4vw, 2.5rem); box-shadow: var(--shadow); scroll-margin-top: 100px; }
+  .lead-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 1.25rem; }
+  @media (max-width: 640px) { .lead-form__grid { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+  .field--full { grid-column: 1 / -1; }
+  .field label { font-weight: 600; font-size: 0.95rem; }
+  .field input, .field select, .field textarea {
+    font: inherit; font-size: 1rem; color: var(--ink);
+    padding: 0.75rem 0.9rem; min-height: 48px;
+    border: 1px solid #c4d0e0; border-radius: 10px; background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; min-width: 0; max-width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 140px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--cyan-700); box-shadow: 0 0 0 4px rgb(0 212 255 / 0.2); }
+  .field [aria-invalid='true'] { border-color: #c62828; }
+  .field :global(.field__error) { color: #b71c1c; font-size: 0.9rem; margin: 0; }
+  .field--check { flex-direction: row; align-items: flex-start; gap: 0.75rem; }
+  .field--check input { min-height: 0; width: 1.25rem; height: 1.25rem; margin-top: 0.2rem; flex: none; accent-color: var(--cyan-700); }
+  .field--check label { font-weight: 400; color: var(--ink-soft); }
+  .field--trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .lead-form__footer { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 1.75rem; }
+  .lead-form__note { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
+  .lead-form__status:empty { display: none; }
+  .lead-form__status { margin-top: 1.25rem; padding: 0.9rem 1.1rem; border-radius: 10px; font-weight: 500; }
+  .lead-form__status[data-kind='error'] { background: #fdecea; color: #8a1c13; }
+  .lead-form__status[data-kind='success'] { background: #e6f6ee; color: #135c36; }
+  .lead-form__status[data-kind='info'] { background: var(--mist); color: var(--ink); }
+  .lead-form button[disabled] { opacity: 0.7; cursor: progress; }
+</style>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { home } from '../lib/content';
+
+const agreed = [
+  { title: 'Scope and goals', text: 'The tasks we handle, what success looks like and how it is measured.' },
+  { title: 'Hours and coverage', text: 'The days, hours and time zones you need covered.' },
+  { title: 'Tools and access', text: 'Which of your systems we use, with only the access the work requires.' },
+  { title: 'Scripts and tone', text: 'Your scripts, templates, brand voice and the answers to common questions.' },
+  { title: 'Escalation rules', text: 'What we resolve ourselves and what we pass to your team, and how fast.' },
+  { title: 'Reporting', text: 'The reports you receive, what they include and how often.' },
+];
+---
+<BaseLayout title="How we work" description="How Zee Telephonics onboards new clients: discovery call, proposal, onboarding and go-live, with clear reporting throughout.">
+  <PageHero
+    eyebrow="How we work"
+    title="A clear path from first call to go-live"
+    lead="Outsourcing should feel controlled, not risky. Here is how we take on new work, step by step."
+    crumbs={[{ href: '/how-we-work/', label: 'How we work' }]}
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">The process</span>
+        <h2>Four steps to getting started</h2>
+      </div>
+      <div class="reveal"><ProcessSteps /></div>
+    </div>
+  </section>
+
+  <section class="section section--mist">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Agreed up front</span>
+        <h2>What we settle with you before we start</h2>
+        <p class="lead">Every engagement begins with a written scope, so both sides know exactly what to expect.</p>
+      </div>
+      <div class="grid grid--3">
+        {agreed.map((a) => (
+          <div class="card reveal">
+            <h3>{a.title}</h3>
+            <p>{a.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {home.principles.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Our principles</span>
+          <h2>How we look after your customers</h2>
+        </div>
+        <div class="grid grid--4">
+          {home.principles.map((p) => (
+            <div class="card reveal">
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand title="Start with a discovery call" text="Tell us about your business and the work you want to hand over." />
+</BaseLayout>

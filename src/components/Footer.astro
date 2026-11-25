@@ -1,0 +1,67 @@
+---
+import Logo from './Logo.astro';
+import { site, services, businessName } from '../lib/content';
+const year = new Date().getFullYear();
+const socials = Object.entries(site.social).filter(([, url]) => url);
+const labels: Record<string, string> = { linkedin: 'LinkedIn', facebook: 'Facebook', x: 'X', instagram: 'Instagram' };
+const { email, phone, hours, address } = site.contact;
+---
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a href="/" aria-label="Zee Telephonics home" class="site-footer__logo"><Logo /></a>
+      <p class="site-footer__tagline">{site.tagline}</p>
+      {socials.length > 0 && (
+        <ul class="site-footer__social">
+          {socials.map(([key, url]) => <li><a href={url} rel="noopener" target="_blank">{labels[key] ?? key}</a></li>)}
+        </ul>
+      )}
+    </div>
+    <div>
+      <h2 class="site-footer__title">Services</h2>
+      <ul class="site-footer__list">
+        {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.title}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h2 class="site-footer__title">Company</h2>
+      <ul class="site-footer__list">
+        <li><a href="/how-we-work/">How we work</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/privacy/">Privacy policy</a></li>
+        <li><a href="/terms/">Terms of use</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="site-footer__title">Get in touch</h2>
+      <ul class="site-footer__list">
+        {email && <li><a href={`mailto:${email}`}>{email}</a></li>}
+        {phone && <li><a href={`tel:${phone.replace(/[^+\d]/g, '')}`}>{phone}</a></li>}
+        {hours && <li>{hours}</li>}
+        {address && <li>{address}</li>}
+        <li><a href="/contact/#quote">Send us an enquiry</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container site-footer__bottom">
+    <p>&copy; {year} {businessName}. All rights reserved.</p>
+    <p>{site.domain}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--navy-950); color: var(--on-dark-soft); padding-top: clamp(3.5rem, 7vw, 5rem); font-size: 0.95rem; }
+  .site-footer__grid { display: grid; grid-template-columns: 1.4fr 1.2fr 0.8fr 1fr; gap: 2.5rem; padding-bottom: 3rem; }
+  @media (max-width: 900px) { .site-footer__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .site-footer__grid { grid-template-columns: 1fr; } }
+  .site-footer__logo { display: inline-block; text-decoration: none; margin-bottom: 1rem; }
+  .site-footer__tagline { max-width: 30ch; }
+  .site-footer__title { font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan-400); margin-bottom: 1rem; }
+  .site-footer__list, .site-footer__social { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55rem; }
+  .site-footer__social { display: flex; gap: 1rem; }
+  .site-footer a { color: var(--on-dark-soft); text-decoration: none; }
+  .site-footer a:hover { color: var(--cyan-400); }
+  .site-footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; border-top: 1px solid rgb(255 255 255 / 0.08); padding-block: 1.5rem; font-size: 0.85rem; }
+  .site-footer__bottom p { margin: 0; }
+</style>

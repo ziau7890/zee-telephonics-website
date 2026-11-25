@@ -1,0 +1,165 @@
+{
+  "_readme": "The ONE place to edit services. Set \"published\": false to hide a service everywhere (menus, pages, contact form). Change \"order\" to reorder. \"slug\" becomes the web address: /services/<slug>/. Allowed icons: headset, phone-out, target, calendar, trend, chat, assistant, documents. Copy is a draft: keep only what you actually offer.",
+  "services": [
+    {
+      "slug": "inbound-customer-support",
+      "title": "Inbound Customer Support",
+      "published": true,
+      "order": 1,
+      "icon": "headset",
+      "summary": "Answer customer calls in your brand's voice, resolve questions and route issues to the right place.",
+      "intro": "Your customers call with questions, orders and problems. We answer as an extension of your team, follow your scripts and escalation rules, and log every interaction the way you need it.",
+      "includes": [
+        "Answering inbound calls during the hours you choose",
+        "Order, account and general enquiry handling",
+        "Ticket logging in your help desk or CRM",
+        "Escalation to your team using your rules",
+        "Call notes and regular activity reports"
+      ],
+      "goodFit": [
+        "Growing businesses whose call volume has outpaced their in-house team",
+        "Teams that need cover outside their own office hours"
+      ]
+    },
+    {
+      "slug": "outbound-calling",
+      "title": "Outbound Calling",
+      "published": true,
+      "order": 2,
+      "icon": "phone-out",
+      "summary": "Proactive calls for follow-ups, reminders, surveys, renewals and customer win-back.",
+      "intro": "Outbound calls work best when they are planned, polite and measured. We agree the goal, script and call lists with you, then report on every outcome.",
+      "includes": [
+        "Follow-up and reminder calls",
+        "Customer surveys and feedback calls",
+        "Renewal and win-back campaigns",
+        "Call outcomes recorded against each contact",
+        "Campaign summaries you can act on"
+      ],
+      "goodFit": [
+        "Businesses with a contact list and a clear call objective",
+        "Teams that want calls made without hiring and training in-house"
+      ]
+    },
+    {
+      "slug": "lead-generation",
+      "title": "Lead Generation",
+      "published": true,
+      "order": 3,
+      "icon": "target",
+      "summary": "Find and qualify prospects that match your ideal customer, so your sales team talks to the right people.",
+      "intro": "We work from your ideal customer profile to research, contact and qualify prospects, then pass on the ones that meet the criteria you set.",
+      "includes": [
+        "Prospect research against your ideal customer profile",
+        "Initial outreach by phone and email",
+        "Qualification using questions you approve",
+        "Qualified leads delivered into your CRM or a shared sheet",
+        "Feedback on which messages and segments respond"
+      ],
+      "goodFit": [
+        "B2B companies that need a steadier flow of qualified conversations",
+        "Sales teams that want to spend their time on closing"
+      ]
+    },
+    {
+      "slug": "appointment-setting",
+      "title": "Appointment Setting",
+      "published": true,
+      "order": 4,
+      "icon": "calendar",
+      "summary": "Book qualified meetings straight into your team's calendars.",
+      "intro": "We contact interested prospects, confirm they meet your criteria and book a time that works for both sides, with reminders to reduce no-shows.",
+      "includes": [
+        "Booking meetings directly into your calendars",
+        "Pre-meeting qualification notes",
+        "Confirmation and reminder messages",
+        "Rescheduling of missed meetings",
+        "Clear reporting on meetings booked and held"
+      ],
+      "goodFit": [
+        "Sales and consulting teams whose calendars should be full of the right meetings",
+        "Businesses running events, demos or consultations"
+      ]
+    },
+    {
+      "slug": "sales-development-support",
+      "title": "Sales Development Support",
+      "published": true,
+      "order": 5,
+      "icon": "trend",
+      "summary": "Extra hands for your sales pipeline: research, outreach sequences, CRM updates and follow-ups.",
+      "intro": "We support your sales team with the time-consuming groundwork, so deals keep moving and nothing falls through the cracks.",
+      "includes": [
+        "Account and contact research",
+        "Running outreach sequences you approve",
+        "Keeping CRM records accurate and up to date",
+        "Follow-ups after demos and proposals",
+        "Pipeline hygiene and activity reporting"
+      ],
+      "goodFit": [
+        "Sales teams with more pipeline work than people",
+        "Founders who are still doing their own outreach"
+      ]
+    },
+    {
+      "slug": "email-and-live-chat-support",
+      "title": "Email and Live Chat Support",
+      "published": true,
+      "order": 6,
+      "icon": "chat",
+      "summary": "Written support that is quick, accurate and on-brand, across email and website chat.",
+      "intro": "Many customers prefer to write rather than call. We handle your support inbox and live chat using your tone of voice, templates and knowledge base.",
+      "includes": [
+        "Support inbox management",
+        "Live chat on your website or app",
+        "Response templates written in your brand voice",
+        "Tagging and routing in your help desk",
+        "Updates to your knowledge base when gaps appear"
+      ],
+      "goodFit": [
+        "Online stores and software businesses",
+        "Teams whose inbox has become a backlog"
+      ]
+    },
+    {
+      "slug": "virtual-assistance",
+      "title": "Virtual Assistance",
+      "published": true,
+      "order": 7,
+      "icon": "assistant",
+      "summary": "Reliable day-to-day admin support: inbox, calendar, research and routine tasks.",
+      "intro": "Hand over the recurring admin that takes you away from the work only you can do. We agree clear tasks, access and checkpoints before we start.",
+      "includes": [
+        "Inbox and calendar management",
+        "Scheduling and travel coordination",
+        "Online research and document preparation",
+        "Data updates in your tools",
+        "Recurring routine tasks with checklists"
+      ],
+      "goodFit": [
+        "Founders, executives and small teams",
+        "Businesses that need flexible admin help"
+      ]
+    },
+    {
+      "slug": "back-office-and-data-processing",
+      "title": "Back-Office Support and Data Processing",
+      "published": true,
+      "order": 8,
+      "icon": "documents",
+      "summary": "Accurate data entry, document processing and back-office tasks, done to your standards.",
+      "intro": "Behind every customer interaction is a stack of records to keep right. We take on structured back-office work with agreed accuracy checks.",
+      "includes": [
+        "Data entry and data cleansing",
+        "Order and document processing",
+        "CRM and database updates",
+        "Form and record verification",
+        "Agreed quality checks before delivery"
+      ],
+      "goodFit": [
+        "Operations teams with high-volume, rules-based tasks",
+        "Businesses digitising paper or spreadsheet records"
+      ]
+    }
+  ]
+}
