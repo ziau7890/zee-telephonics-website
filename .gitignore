@@ -1,11 +1,8 @@
-node_modules/
-dist/
-.astro/
-release/
-*.zip
-.env
-.env.*
-# Server secrets: never commit the real config
-server/config/config.php
-config.php
+node_modules
+.next
+out
+.env*
+!.env.example
+*.tsbuildinfo
+.vercel
 .DS_Store

@@ -1,40 +1,48 @@
 {
-  "name": "zee-telephonics-website",
+  "name": "zee-telephonics-bpo",
   "version": "1.0.0",
-  "description": "Zee Telephonics BPO marketing website (Astro static site + PHP lead handler)",
+  "private": true,
+  "description": "Zee Telephonics BPO: the operating platform for BPO teams. Marketing site and SaaS dashboard.",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check",
-    "test:php": "php tests/php/run.php",
-    "package": "bash scripts/package.sh",
-    "test:e2e": "bash tests/e2e/run.sh",
-    "test:vercel": "node tests/vercel/lead.test.mjs"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ziau7890/zee-telephonics-website.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "UNLICENSED",
-  "bugs": {
-    "url": "https://github.com/ziau7890/zee-telephonics-website/issues"
-  },
-  "homepage": "https://github.com/ziau7890/zee-telephonics-website#readme",
   "dependencies": {
-    "@fontsource-variable/figtree": "^5.3.0",
-    "@fontsource-variable/inter": "^5.3.0",
-    "astro": "^5.18.2",
-    "three": "^0.187.0"
+    "@hookform/resolvers": "5.2.2",
+    "@radix-ui/react-dialog": "1.1.15",
+    "@radix-ui/react-dropdown-menu": "2.1.16",
+    "@radix-ui/react-popover": "1.1.15",
+    "@radix-ui/react-switch": "1.2.6",
+    "@radix-ui/react-tabs": "1.1.13",
+    "@radix-ui/react-tooltip": "1.2.8",
+    "@react-three/fiber": "9.3.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "cmdk": "1.1.1",
+    "framer-motion": "^12.43.0",
+    "geist": "^1.5.1",
+    "lucide-react": "0.544.0",
+    "next": "^15.5.29",
+    "next-themes": "0.4.6",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-hook-form": "7.62.0",
+    "recharts": "^3.2.1",
+    "sonner": "2.0.7",
+    "tailwind-merge": "3.3.1",
+    "three": "0.180.0",
+    "zod": "3.25.76"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.12",
-    "@astrojs/sitemap": "^3.7.6",
-    "@types/three": "^0.187.0",
-    "typescript": "^5.9.3"
-  },
-  "private": true,
-  "type": "module"
+    "@types/node": "22.18.6",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "@types/three": "0.180.0",
+    "autoprefixer": "10.4.21",
+    "postcss": "8.5.6",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.9.2"
+  }
 }
