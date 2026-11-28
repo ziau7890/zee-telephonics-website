@@ -1,160 +1,155 @@
-# Zee Telephonics website
+# Zee Telephonics BPO
 
-The website for **Zee Telephonics** (zeetelephonicsbpo.com).
-*Connecting Businesses. Empowering Customers.*
+The operating platform for BPO teams: a marketing website and a SaaS dashboard for workforce, attendance, CRM, clients, projects, payroll, accounting, invoicing and reporting.
 
-It is a fast, static website built with [Astro](https://astro.build), with a 3D "connection sphere" on the homepage and a small PHP + MySQL contact form handler that is ready to connect to a CRM later.
-
-> **Status:** Phase 1 (build) and Phase 2 (testing) are done. The site can run in two places:
-> * **Vercel** (current preview): the contact form runs as a Vercel function and saves leads into the Zee Telephonics CRM database on Supabase, the same pattern as the Business Care project. See [Deploying on Vercel](#deploying-on-vercel).
-> * **Hostinger** (later, optional): the contact form runs as PHP + MySQL. See [docs/DEPLOYMENT-HOSTINGER.md](docs/DEPLOYMENT-HOSTINGER.md).
+Built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, Radix UI, Recharts, React Hook Form + Zod, and React Three Fiber for the 3D scenes.
 
 ---
 
-## What is included
+## Quick start
 
-| Page | Address |
-| --- | --- |
-| Home (3D hero, services, process, principles) | `/` |
-| Services overview | `/services/` |
-| One page per service (8, generated from one file) | `/services/<slug>/` |
-| How we work | `/how-we-work/` |
-| About | `/about/` |
-| Contact and quote form | `/contact/` |
-| Thank you (after sending the form, hidden from Google) | `/thank-you/` |
-| Privacy policy and Terms of use (drafts) | `/privacy/`, `/terms/` |
-| 404 page, `sitemap-index.xml`, `robots.txt` | automatic |
-
-Also included: the logo, a round "ZT" badge inside an orbit ring with a cyan signal dot plus an uppercase wordmark (`src/components/Logo.astro`, `public/favicon.svg`, and a standalone `public/brand/zee-telephonics-logo.svg` for documents), responsive layouts for phone, tablet and desktop, SEO tags and structured data, security headers, and automated tests.
-
-## Editing the content (no coding needed)
-
-All text you are likely to change lives in **three files** in `src/content/`. You can edit them on GitHub: open the file, click the pencil icon, change the text, and commit.
-
-| File | What it controls |
-| --- | --- |
-| `src/content/services.json` | **The services.** One entry per service. Set `"published": false` to hide a service everywhere (menu, pages, footer, contact form). Change `"order"` to reorder. |
-| `src/content/site.json` | Business details: legal name, email, phone, hours, address, social links. **An empty value `""` hides that item on the site.** |
-| `src/content/home.json` | Homepage hero text, the four "How we work" steps, the principles, and the About page text. |
-
-Rules that keep the site honest:
-
-* Only add facts that are true today. The site deliberately has **no** statistics, client logos, testimonials, certifications or office locations. Add them only when they are real and you have permission to show them.
-* Contact email and phone are empty on purpose until you confirm them. The contact form works without them.
-* The service descriptions are a **draft**. Remove anything you do not actually offer.
-* If you make a mistake in one of these files (for example a missing comma or a missing field), the build stops with a message that names the file and field. Nothing broken gets published.
-
-## Running it on your computer
-
-You need [Node.js](https://nodejs.org) 20 or newer.
+Requirements: Node.js 20 or newer, npm 10 or newer.
 
 ```bash
-npm install        # once
-npm run dev        # live preview at http://localhost:4321
-npm run build      # production files in dist/
-npm run preview    # view the production build
+npm install
+cp .env.example .env.local     # optional, defaults work out of the box
+npm run dev                    # http://localhost:3000
 ```
 
-The contact form needs PHP, so in `npm run dev` it shows a polite "could not send" message. That is expected. See "Testing" to try the real form locally.
-
-## Testing
-
-| Command | What it checks |
+| Script | What it does |
 | --- | --- |
-| `npx astro check` | TypeScript and content file checks |
-| `npm run test:vercel` | 13 tests of the Vercel form function against a fake Supabase server |
-| `npm run test:php` | 33 automated tests of the form handler: validation, spam blocking, rate limits, saving, email, CRM output, and what happens when the database or email is down |
-| `npm run test:e2e` | Runs the built site on a local PHP server and checks every page and link on phone, tablet and desktop sizes, the mobile menu, the 3D hero and its fallback, and sends real test enquiries (with and without JavaScript) into a local database and a local test mail server. Needs PHP 8.1+, Python 3 with `aiosmtpd`, and Playwright. |
+| `npm run dev` | Development server with hot reload |
+| `npm run build` | Production build (type checks included) |
+| `npm start` | Serve the production build |
+| `npm run typecheck` | TypeScript only |
 
-GitHub runs the type check, build and PHP tests on every pull request (`.github/workflows/ci.yml`).
+The dashboard lives at `/app`. Sign-in is a mock: any email and password on `/login` take you to the dashboard (the password `wrongpassword` shows the error state).
 
-## The 3D connection sphere
+### Environment variables
 
-* `src/scripts/connection-sphere.ts` draws a slowly turning globe of points, with light pulses travelling along arcs between random points. The points are abstract; they do not represent real places.
-* `src/scripts/hero-loader.ts` decides who gets it. It loads **after** the page is visible, and only on laptops, desktops and tablets with WebGL. Phones, "reduce motion" users, data-saver users, low-memory devices and browsers without WebGL see a still image of the same globe (`/hero-sphere.svg`, generated at build time) and download no 3D code at all.
-* It pauses when scrolled out of view or when the tab is hidden, caps at 60 frames per second, and limits screen resolution to save battery.
-
-## The contact form and CRM readiness
-
-```
-Browser form  ──POST──▶  /api/lead.php
-                          ├─ spam checks: hidden honeypot field, too-fast check, per-connection rate limit,
-                          │               same-site check, optional Cloudflare Turnstile
-                          ├─ validation of every field on the server
-                          ├─ save to MySQL table `leads`              (database/schema.sql)
-                          ├─ email alert to you via SMTP (PHPMailer, included)
-                          ├─ optional confirmation email to the visitor
-                          └─ CRM adapter (off by default; a webhook adapter is included)
-```
-
-* The form works with and without JavaScript.
-* A lead is only lost if **both** the database and email fail. If one works, the visitor sees success and you still get the lead.
-* IP addresses are never stored, only a salted one-way hash for rate limiting.
-* **CRM ready:** the `leads` table uses common CRM fields (name, company, email, phone, service, team size, message, consent, source page, UTM campaign tags, status) plus `crm_status`, `crm_id` and `crm_synced_at` columns. `public/api/lib/Crm/` holds a small `CrmAdapter` interface. Today it uses `NullCrmAdapter` (no CRM). Setting `'driver' => 'webhook'` in the config sends each lead as JSON to Zapier, Make, n8n or a CRM webhook. A HubSpot or Zoho adapter can be added later without touching the website pages.
-
-### Server configuration (secrets)
-
-Passwords never go in Git. The template is `server/config/config.example.php`. On the server you copy it to `config.php`, fill it in, and place it **outside** `public_html` in a folder named `zee-private`. `config.php` is listed in `.gitignore` so it cannot be committed by accident. Full steps are in the deployment guide.
-
-What has and has not been tested: the form handler was tested locally with an SQLite database and a local test mail server. It has **not** yet been tested on Hostinger with a real MySQL database and a real mailbox, because there is no hosting yet. That test is part of Phase 3.
-
-## Deploying on Vercel
-
-`vercel.json` tells Vercel to build the Astro site, remove the PHP files (Vercel cannot run PHP), and serve the form handler `api/lead.ts` as a serverless function at `/api/lead`. The form automatically posts there when the site is built on Vercel.
-
-Leads are saved by one server-only database function, `create_website_lead(p_payload, p_ip_hash, p_user_agent, p_rate_limit)`, in the Supabase project shared with the Zee Telephonics CRM. **The CRM repository owns that function and every database migration**; this website only calls it. The payload is the `Lead` object in `src/lib/lead.ts` (full_name, company, email, phone, service slug, team_size, message, consent, consent_text, source_page and UTM fields). The function answers `{ "status": "ok", "lead_id": ... }` or `{ "status": "rate_limited" }`.
-
-Environment variables to set in Vercel (Project > Settings > Environment Variables):
-
-| Variable | Required | What it is |
+| Variable | Default | Purpose |
 | --- | --- | --- |
-| `SUPABASE_URL` | Yes | The CRM Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase > Project settings > API > `service_role` key. Server only, never shown to visitors. |
-| `IP_HASH_SALT` | Yes | Any long random string |
-| `TURNSTILE_SECRET_KEY` | No | Cloudflare Turnstile secret (also put the site key in `site.json`) |
-| `RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_FROM` | No | Email alert for each new lead through Resend |
+| `NEXT_PUBLIC_DATA_SOURCE` | `mock` | `mock` uses in-memory sample data, `api` calls your backend |
+| `NEXT_PUBLIC_API_BASE_URL` | none | Base URL for the REST API when `DATA_SOURCE=api` |
+| `NEXT_PUBLIC_SITE_URL` | `https://zee-telephonics-bpo.vercel.app` | Canonical URL for metadata, sitemap and robots |
 
-Until the Supabase key is set, the form tells visitors it could not send the enquiry. It never pretends to succeed.
+### Deploying
 
-## Project structure
+The project is a standard Next.js app. On Vercel: import the repository, keep the defaults (framework is detected automatically), add the environment variables above, and deploy. Any Node host works with `npm run build && npm start`.
+
+---
+
+## What's inside
+
+### Marketing site (`src/app/(marketing)`)
+
+Home, Features, Solutions, Industries, Pricing (monthly/yearly toggle, comparison table, FAQ), About, Resources (blog index plus articles), Contact and Request a Demo. Login and Sign Up live in `src/app/(auth)`.
+
+- **3D scenes** (`src/components/three`): the hero "operations core", the module ecosystem, the team orbit and the security vault are procedural (no model files). Each scene loads only as it nears the viewport, pauses when off screen, honours `prefers-reduced-motion`, and falls back to a static SVG when WebGL is unavailable, on Save-Data, or on low-end devices.
+- **SEO**: per-page metadata, Open Graph tags, `sitemap.xml`, `robots.txt`, semantic headings.
+
+### Dashboard (`src/app/app`)
+
+| Route | Module |
+| --- | --- |
+| `/app` | Executive overview: KPIs, revenue/expense trend, alerts, productivity, CSAT, activity |
+| `/app/team` | Directory, departments, hierarchy, onboarding, roles. Employee profiles at `/app/team/[id]` |
+| `/app/attendance` | Today's board, trends, shifts, leave approvals, holidays |
+| `/app/leads` | Kanban pipeline with drag and drop (plus a keyboard "Move to" menu) |
+| `/app/crm` | Contacts, activities, follow-ups, pipeline analytics |
+| `/app/clients` | Client list, health, SLA. Client detail with portal preview at `/app/clients/[id]` |
+| `/app/projects` | Programs and campaigns with staffing and KPIs |
+| `/app/payroll` | Payroll runs, approval, payslips, adjustments |
+| `/app/accounting` | P&L, cash flow, ledger, receivables/payables, budgets, tax, audit log |
+| `/app/invoices` | Invoices with create/send/remind/mark paid, partial payments, PDF, recurring |
+| `/app/reports` | Seven standard reports, filters, CSV/PDF export, custom report builder, schedules |
+| `/app/integrations` | Connect/disconnect integrations, API keys, webhooks |
+| `/app/settings` | Profile, workspace, users and roles, security, notifications, billing |
+| `/app/notifications` | Notification inbox, team messages, activity feed, announcements |
+
+Shell features: collapsible sidebar (remembered per browser), mobile navigation drawer, breadcrumbs, workspace switcher, notification center, profile menu, light/dark/system theme, and a command palette.
+
+Keyboard shortcuts: `⌘K` / `Ctrl+K` or `/` opens the command palette, `[` collapses the sidebar, and `g` followed by a letter jumps to a module (for example `g t` for Team, `g i` for Invoices).
+
+### Project layout
 
 ```
 src/
-  content/        services.json, site.json, home.json   <- edit these
-  components/     Header, Footer, Hero, Logo, LeadForm, ServiceCard, ...
-  layouts/        BaseLayout (SEO tags, fonts, header, footer)
-  pages/          one file per page; services/[slug].astro builds every service page
-  scripts/        3D hero (connection-sphere.ts, hero-loader.ts)
-  styles/         global.css (colours, fonts, spacing tokens)
-api/
-  lead.ts         Vercel form function (saves leads to Supabase)
-public/
-  .htaccess       HTTPS redirect, security headers, caching (Hostinger)
-  api/            lead.php + lib/ (PHP form handler, PHPMailer, CRM adapters)
-server/config/    config.example.php (template for secrets)
-database/         schema.sql (MySQL tables)
-tests/            php/ (unit tests) and e2e/ (browser tests)
-docs/             DEPLOYMENT-HOSTINGER.md
-scripts/          package.sh (builds the downloadable ZIP)
+  app/                 routes (marketing, auth, dashboard), sitemap, robots
+  components/
+    ui/                buttons, inputs, dialogs, tabs, badges and other primitives
+    marketing/         header, footer, pricing, forms, product previews
+    dashboard/         app shell, command palette, data table, charts kit
+    three/             3D scenes and their static fallbacks
+    brand/             logo and wordmark
+  lib/
+    services/          the data layer (see below)
+    mock/              types and deterministic sample data
+    content.ts         marketing copy: modules, plans, FAQs, posts
+    site.ts            company name, URLs, contact emails, navigation
 ```
 
-## Brand
+### Branding
 
-| Token | Colour | Use |
-| --- | --- | --- |
-| Midnight navy | `#0A1630` | Hero, footer, dark sections |
-| Deep navy | `#12244D` | Panels on dark sections |
-| Signal blue | `#1E5EFF` | Gradients, icons |
-| Electric cyan | `#00D4FF` | Buttons and highlights on dark backgrounds |
-| Cyan for light backgrounds | `#007A99` | Links on white (readable contrast) |
-| Mist | `#F2F6FB` | Alternating light sections |
+Company name, contact emails and navigation are in `src/lib/site.ts`. The logo is `src/components/brand/logo.tsx` with matching files at `src/app/icon.svg` and `public/logo-mark.svg`. Colours are CSS variables in `src/app/globals.css` (light and dark sets) and brand colours in `tailwind.config.ts`.
 
-Fonts: Figtree (headings) and Inter (text), both self-hosted, so no Google Fonts request is made.
+The contact emails (`@zeetelephonics.com`) and office address are placeholders. Replace them with your real details before going live.
 
-## Before launch checklist
+---
 
-- [ ] Confirm which services you offer and edit `services.json`.
-- [ ] Fill in `legalName` and any contact details you want public in `site.json`.
-- [ ] Have the privacy policy and terms reviewed.
-- [ ] Approve or replace the starter logo.
-- [ ] Phase 3: hosting, database, mailbox, SSL, and a live form test (see the deployment guide).
+## Replacing mock data with a real backend
+
+UI code never imports mock data directly for reads; it calls `services.*` from `src/lib/services/index.ts`. Each method is declared once with two implementations:
+
+```ts
+list: () => source(
+  () => mock(db.employees),                 // used when NEXT_PUBLIC_DATA_SOURCE=mock
+  () => http<Employee[]>("/employees"),     // used when NEXT_PUBLIC_DATA_SOURCE=api
+),
+```
+
+Pages consume them through `useService`, which handles loading, error and reload state:
+
+```ts
+const { data, loading, error, reload } = useService(() => services.team.list());
+```
+
+### Option A: your own REST API
+
+1. Implement the endpoints listed in `src/lib/services/index.ts` (for example `GET /employees`, `PATCH /leads/:id`, `POST /invoices`, `POST /payroll/runs/:id/approve`). Response shapes are the TypeScript types in `src/lib/mock/types.ts`.
+2. Set `NEXT_PUBLIC_DATA_SOURCE=api` and `NEXT_PUBLIC_API_BASE_URL=https://your-api`.
+3. Requests send cookies (`credentials: "include"`), so a session cookie from your auth service works without code changes. For bearer tokens, add an `Authorization` header in `http()` inside `src/lib/services/client.ts`.
+
+### Option B: Supabase
+
+1. Create tables that mirror the types in `src/lib/mock/types.ts` (employees, clients, projects, leads, invoices, payroll_runs, transactions, and so on). Enable Row Level Security and scope every table by a `workspace_id` column.
+2. `npm install @supabase/supabase-js` and create a client in `src/lib/services/supabase.ts` using `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+3. Replace the `http(...)` side of each service with a Supabase query, for example:
+
+   ```ts
+   list: () => source(
+     () => mock(db.employees),
+     async () => {
+       const { data, error } = await supabase.from("employees").select("*").order("name");
+       if (error) throw error;
+       return data as Employee[];
+     },
+   ),
+   ```
+4. Swap the mock login in `src/components/marketing/auth-forms.tsx` for `supabase.auth.signInWithPassword` (and the Google/Microsoft buttons for `signInWithOAuth`), and protect `/app` with middleware that checks the session.
+
+### A few things to wire up for production
+
+- **Authentication and route protection** for `/app` (middleware plus server-side session checks).
+- **Role-based access**: the roles in Settings → Users & roles are UI only. Enforce them on the server.
+- **Integrations, emails and file exports**: connect/sync, invoice emails, reminders and scheduled reports are simulated. Hook them to your providers.
+- **Forms** on Contact and Request a Demo call `services.marketing.*`. Point these at your CRM or an email service.
+- **Mutations in mock mode** live in memory and reset on reload. This is intentional for demos.
+
+---
+
+## Accessibility and performance notes
+
+- Skip link, visible focus rings, labelled form fields with inline errors, `aria-sort` on sortable tables, text summaries for every chart, keyboard alternatives for drag and drop.
+- Respects `prefers-reduced-motion` across animations and 3D scenes.
+- 3D code is split into its own chunks and never blocks first paint. Dashboard routes are client-rendered with skeleton loading states.
